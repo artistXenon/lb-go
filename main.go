@@ -9,7 +9,7 @@ import (
 )
 
 // parse based on config
-var compiled_regexp, _ = regexp.Compile("^([-a-zA-Z0-9.]+\\.|)jaewon\\.pro$")
+var compiled_regexp, _ = regexp.Compile("^(([-a-zA-Z0-9.]+)\\.|)jaewon\\.pro$")
 
 func onHttp(res http.ResponseWriter, req *http.Request) {
 	path := req.URL.Path
