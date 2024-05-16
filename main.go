@@ -28,7 +28,6 @@ func onHttp(res http.ResponseWriter, req *http.Request) {
 
 		handler := loads.GetServe(sub_domain)
 		if handler == nil {
-			// TODO: redirect mapping
 			res.WriteHeader(http.StatusInternalServerError)
 			res.Write([]byte("unknown error"))
 			return

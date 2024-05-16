@@ -3,12 +3,26 @@ package loads
 import (
 	"errors"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 )
 
 var m = map[string]http.Handler{}
 
 func GetServe(sub_domain string) (handler http.Handler) {
+	h := getDirectory(sub_domain)
+	if h != nil {
+		return h
+	}
+	h = getPipe(sub_domain)
+	if h != nil {
+		return h
+	}
+	return nil
+}
+
+func getDirectory(sub_domain string) (handler http.Handler) {
 	path := "./serve/" + sub_domain
 	if _, err := os.Stat(path); err == nil {
 		val, exists := m[sub_domain]
@@ -22,4 +36,23 @@ func GetServe(sub_domain string) (handler http.Handler) {
 	} else {
 		return nil
 	}
+}
+
+func getPipe(sub_domain string) (handler http.Handler) {
+	// TODO: config
+	// TODO: remove unused handler
+	if sub_domain == "workspace" {
+		val, exists := m[sub_domain]
+		if !exists {
+			remote, err := url.Parse("http://192.168.0.46:9000")
+			if err != nil {
+				panic(err)
+			}
+			proxy := httputil.NewSingleHostReverseProxy(remote)
+			val = &ProxyHandler{proxy}
+			m[sub_domain] = val
+		}
+		return val
+	}
+	return nil
 }
