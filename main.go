@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+
 	configs "lb-go/configs"
 	loads "lb-go/loads"
+	"log"
 	"net/http"
 	"regexp"
 )
@@ -11,7 +13,7 @@ import (
 // parse based on config
 var compiled_regexp, _ = regexp.Compile(`^(([-a-zA-Z0-9.]+)\.|)jaewon\.pro$`)
 
-func onHttps(res http.ResponseWriter, req *http.Request) {
+func onHttp(res http.ResponseWriter, req *http.Request) {
 	path := req.URL.Path
 	hostname := req.Host
 
@@ -41,6 +43,10 @@ func onHttps(res http.ResponseWriter, req *http.Request) {
 func main() {
 	config := configs.Load()
 
-	// http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
-	http.ListenAndServeTLS(fmt.Sprintf(":%d", config.SecurePort), "cert.pem", "key.pem", http.HandlerFunc(onHttps))
+	http.Handle("/", http.HandlerFunc(onHttp))
+	http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
+	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", config.SecurePort), "cert.pem", "key.pem", nil)
+	if err != nil {
+		log.Fatal("Serve: ", err)
+	}
 }
