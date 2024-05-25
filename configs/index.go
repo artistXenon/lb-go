@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	Port       uint16 `json:"port"`
+	SecurePort uint16 `json:"secure_port"`
 	DomainRoot string `json:"domain_root"`
 }
 

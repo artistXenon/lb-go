@@ -11,7 +11,7 @@ import (
 // parse based on config
 var compiled_regexp, _ = regexp.Compile(`^(([-a-zA-Z0-9.]+)\.|)jaewon\.pro$`)
 
-func onHttp(res http.ResponseWriter, req *http.Request) {
+func onHttps(res http.ResponseWriter, req *http.Request) {
 	path := req.URL.Path
 	hostname := req.Host
 
@@ -41,6 +41,6 @@ func onHttp(res http.ResponseWriter, req *http.Request) {
 func main() {
 	config := configs.Load()
 
-	http.Handle("/", http.HandlerFunc(onHttp))
-	http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
+	// http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
+	http.ListenAndServeTLS(fmt.Sprintf(":%d", config.SecurePort), "cert.pem", "key.pem", http.HandlerFunc(onHttps))
 }
