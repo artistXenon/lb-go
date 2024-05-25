@@ -22,24 +22,23 @@ func onHttp(res http.ResponseWriter, req *http.Request) {
 	if len(sub_match) == 3 {
 		sub_domain := sub_match[2]
 		if sub_domain == "" {
-			res.Write([]byte("hello darkness my old friend"))
+			// root handler
+			res.Write([]byte("Coming Soon :)"))
 			return
 		}
 
 		handler := loads.GetServe(sub_domain)
-		if handler == nil {
-			res.WriteHeader(http.StatusInternalServerError)
-			res.Write([]byte("unknown error"))
+		if handler != nil {
+			handler.ServeHTTP(res, req)
 			return
 		}
-		handler.ServeHTTP(res, req)
-		return
 	}
-	res.Write([]byte("hello darkness my old friend"))
+
+	res.WriteHeader(http.StatusInternalServerError)
+	res.Write([]byte("Internal Error"))
 }
 
 func main() {
-
 	config := configs.Load()
 
 	http.Handle("/", http.HandlerFunc(onHttp))

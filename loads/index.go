@@ -52,7 +52,13 @@ func getPipe(sub_domain string) (handler http.Handler) {
 			val = &ProxyHandler{proxy}
 			m[sub_domain] = val
 		}
+		// TODO: create a fallback
+		// dest server may not be open. in this case, return a generated page about it
 		return val
 	}
 	return nil
 }
+
+// TODO: clear map.
+// every n minutes, check connection usage and clear reference to specific http handler so that GC can do a job.
+// make map will save not just handler but a struct with such info
