@@ -44,7 +44,7 @@ func main() {
 	config := configs.Load()
 
 	http.Handle("/", http.HandlerFunc(onHttp))
-	http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
+//	http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
 	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", config.SecurePort), "cert.pem", "key.pem", nil)
 	if err != nil {
 		log.Fatal("Serve: ", err)
