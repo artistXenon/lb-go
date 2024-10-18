@@ -11,9 +11,9 @@ import (
 )
 
 // parse based on config
-var compiled_regexp, _ = regexp.Compile(`^(([-a-zA-Z0-9.]+)\.|)jaewon\.pro$`)
+var compiled_regexp, _ = regexp.Compile(`^(([-a-zA-Z0-9.]+)\.|)uxagee\.in$`)
 
-func onHttp(res http.ResponseWriter, req *http.Request) {
+func onHttps(res http.ResponseWriter, req *http.Request) {
 	path := req.URL.Path
 	hostname := req.Host
 
@@ -40,13 +40,33 @@ func onHttp(res http.ResponseWriter, req *http.Request) {
 	res.Write([]byte("Internal Error"))
 }
 
-func main() {
-	config := configs.Load()
+func runHttps(cfg *configs.Config) {
+	http.Handle("/", http.HandlerFunc(onHttps))
+	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", cfg.SecurePort), cfg.Certificate, cfg.PrivateKey, nil)
 
-	http.Handle("/", http.HandlerFunc(onHttp))
-//	http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil)
-	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", config.SecurePort), "cert.pem", "key.pem", nil)
 	if err != nil {
 		log.Fatal("Serve: ", err)
 	}
+}
+
+func onHttp(res http.ResponseWriter, _ *http.Request) {
+	res.WriteHeader(http.StatusBadRequest)
+	res.Write([]byte("Insecure access, Redirect manually"))
+}
+
+func runHttp(port uint16) {
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+
+	if err != nil {
+		log.Fatal("Serve: ", err)
+	}
+}
+
+func main() {
+	config := configs.Load()
+
+	go runHttps(config)
+	go runHttp(config.Port)
+
+	<-make(chan int)
 }

@@ -44,7 +44,7 @@ func getPipe(sub_domain string) (handler http.Handler) {
 	if sub_domain == "workspace" {
 		val, exists := m[sub_domain]
 		if !exists {
-			remote, err := url.Parse("http://192.168.0.46:9000")
+			remote, err := url.Parse("http://192.168.0.1")
 			if err != nil {
 				panic(err)
 			}

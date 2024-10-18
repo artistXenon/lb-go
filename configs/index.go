@@ -7,9 +7,11 @@ import (
 )
 
 type Config struct {
-	Port       uint16 `json:"port"`
-	SecurePort uint16 `json:"secure_port"`
-	DomainRoot string `json:"domain_root"`
+	Port        uint16 `json:"port"`
+	SecurePort  uint16 `json:"secure_port"`
+	DomainRoot  string `json:"domain_root"`
+	Certificate string `json:"certificate"`
+	PrivateKey  string `json:"private_key"`
 }
 
 var config *Config = nil
